@@ -50,12 +50,7 @@ namespace AgentApi
             {
                 var client = new MongoClient(mongoConnectionString);
 
-                var userDb = client.GetDatabase("users");
-                var collection = userDb.GetCollection<User>("users");
-                if (collection == null)
-                {
-                    userDb.CreateCollection("users");
-                }
+                var userDb = client.GetDatabase("AgentApi");
 
                 return client;
             });
@@ -67,9 +62,10 @@ namespace AgentApi
                 options.Password.RequiredLength = 6;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
+                options.User.RequireUniqueEmail = true;
             })
                 .AddDefaultTokenProviders()
-                .AddMongoDbStores<User, Role, Guid>(mongoConnectionString, "users");
+                .AddMongoDbStores<User, Role, Guid>(mongoConnectionString, "AgentApi");
 
             services.AddAutoMapper(typeof(Startup));
             
