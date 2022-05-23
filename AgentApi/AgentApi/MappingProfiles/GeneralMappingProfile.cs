@@ -8,7 +8,8 @@ namespace AgentApi.MappingProfiles
     {
         public GeneralMappingProfile()
         {
-            CreateMap<RegisterUserDto, User>();
+            CreateMap<RegisterUserDto, User>().ReverseMap();
+            CreateMap<RegisterCompanyDto, Company>();
         }
     }
 }
