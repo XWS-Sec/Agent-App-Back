@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AgentApi.Attributes;
 using AgentApi.Middlewares;
 using AgentApi.Model;
+using AspNetCore.Identity.MongoDbCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MongoDbGenericRepository;
 
 namespace AgentApi
 {
@@ -46,14 +49,7 @@ namespace AgentApi
             var mongoConnectionString =
                 Environment.GetEnvironmentVariable("AgentApiMongoDb") ?? "mongodb://localhost:27017";
 
-            services.AddSingleton<IMongoClient, MongoClient>(s =>
-            {
-                var client = new MongoClient(mongoConnectionString);
-
-                var userDb = client.GetDatabase("AgentApi");
-
-                return client;
-            });
+            services.AddSingleton<IMongoClient, MongoClient>(x => new MongoClient(mongoConnectionString));
 
             services.AddIdentity<User, Role>(options =>
             {
@@ -77,6 +73,13 @@ namespace AgentApi
                     .SetIsOriginAllowed(_ => true);
             }));
             services.AddHttpClient();
+
+            services.AddScoped<CustomAuthorizeAttribute>();
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<AdminSeedAttribute>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
