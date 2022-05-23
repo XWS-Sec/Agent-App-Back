@@ -10,6 +10,7 @@ namespace AgentApi.MappingProfiles
         {
             CreateMap<RegisterUserDto, User>().ReverseMap();
             CreateMap<RegisterCompanyDto, Company>();
+            CreateMap<NewJobOfferDto, JobOffer>();
         }
     }
 }
