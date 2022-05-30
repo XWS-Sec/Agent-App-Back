@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AgentApi.Attributes;
 using AgentApi.Dtos;
@@ -17,14 +18,28 @@ namespace AgentApi.Controllers
         private readonly CreateJobOfferService _createJobOfferService;
         private readonly CreateCommentOnJobOfferService _createCommentOnJobOfferService;
         private readonly UserManager<User> _userManager;
+        private readonly SearchOfferService _searchOfferService;
 
-        public JobOfferController(CreateJobOfferService createJobOfferService, UserManager<User> userManager, CreateCommentOnJobOfferService createCommentOnJobOfferService)
+        public JobOfferController(CreateJobOfferService createJobOfferService, UserManager<User> userManager, CreateCommentOnJobOfferService createCommentOnJobOfferService, SearchOfferService searchOfferService)
         {
             _createJobOfferService = createJobOfferService;
             _userManager = userManager;
             _createCommentOnJobOfferService = createCommentOnJobOfferService;
+            _searchOfferService = searchOfferService;
         }
 
+        [HttpGet]
+        [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "StandardUser" })]
+        public IActionResult Get(string company, string prerequisites, string title)
+        {
+            return Ok(_searchOfferService.FindJobOffers(new SearchOfferDto()
+            {
+                Company = company,
+                Prerequisites = prerequisites,
+                Title = title
+            }));
+        }
+        
         [HttpPost]
         [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "CompanyOwner" })]
         public async Task<IActionResult> Create(NewJobOfferDto newJobOffer)
