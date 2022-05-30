@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AgentApi.Attributes;
+using AgentApi.HostedServices;
 using AgentApi.Middlewares;
 using AgentApi.Model;
 using AspNetCore.Identity.MongoDbCore;
@@ -76,10 +77,8 @@ namespace AgentApi
 
             services.AddScoped<CustomAuthorizeAttribute>();
 
-            services.AddControllers(options =>
-            {
-                options.Filters.Add<AdminSeedAttribute>();
-            });
+            services.AddHostedService(x =>
+                new AdminSeedHostedService(x));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
