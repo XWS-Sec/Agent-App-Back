@@ -4,6 +4,7 @@ using AgentApi.Attributes;
 using AgentApi.Dtos;
 using AgentApi.Model;
 using AgentApi.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,27 @@ namespace AgentApi.Controllers
     {
         private readonly RegisterCompanyService _registerCompanyService;
         private readonly VerifyCompanyService _verifyCompanyService;
+        private readonly SearchCompanyService _searchCompanyService;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
-        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService)
+        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper)
         {
             _registerCompanyService = registerCompanyService;
             _userManager = userManager;
             _verifyCompanyService = verifyCompanyService;
+            _searchCompanyService = searchCompanyService;
+            _mapper = mapper;
+        }
+
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> Get(Guid companyId)
+        {
+            var company = await _searchCompanyService.GetById(companyId);
+
+            return company == null
+                ? NotFound("Company with that id does not exist")
+                : Ok(_mapper.Map<SearchCompanyDto>(company));
         }
 
         [HttpPost]

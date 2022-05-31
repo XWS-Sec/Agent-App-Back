@@ -5,6 +5,7 @@ using AgentApi.Attributes;
 using AgentApi.Dtos;
 using AgentApi.Model;
 using AgentApi.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -38,6 +39,16 @@ namespace AgentApi.Controllers
                 Prerequisites = prerequisites,
                 Title = title
             }));
+        }
+
+        [HttpGet("{jobOfferId}")]
+        public IActionResult Get(Guid jobOfferId)
+        {
+            var jobOffer = _searchOfferService.GetById(jobOfferId);
+
+            return jobOffer == null
+                ? NotFound("Job offer with that id is not found")
+                : Ok(jobOffer);
         }
         
         [HttpPost]

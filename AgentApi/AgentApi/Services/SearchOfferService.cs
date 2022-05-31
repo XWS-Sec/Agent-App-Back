@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,20 @@ namespace AgentApi.Services
             _client = client;
         }
 
+        public JobOffer GetById(Guid id)
+        {
+            var companies = GetCompanies();
+            
+            var offers = new List<JobOffer>();
+            
+            companies
+                .Where(x => x.JobOffers != null && x.JobOffers.Count != 0)
+                .ToList()
+                .ForEach(x => offers.AddRange(x.JobOffers));
+
+            return offers.FirstOrDefault(x => x.Id == id);
+        }
+        
         public IEnumerable<JobOffer> FindJobOffers(SearchOfferDto criteria)
         {
             var companies = GetCompanies();
