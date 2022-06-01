@@ -17,16 +17,18 @@ namespace AgentApi.Controllers
         private readonly RegisterCompanyService _registerCompanyService;
         private readonly VerifyCompanyService _verifyCompanyService;
         private readonly SearchCompanyService _searchCompanyService;
+        private readonly PublishCompanyService _publishCompanyService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper)
+        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper, PublishCompanyService publishCompanyService)
         {
             _registerCompanyService = registerCompanyService;
             _userManager = userManager;
             _verifyCompanyService = verifyCompanyService;
             _searchCompanyService = searchCompanyService;
             _mapper = mapper;
+            _publishCompanyService = publishCompanyService;
         }
 
         [HttpGet("{companyId}")]
@@ -71,6 +73,23 @@ namespace AgentApi.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost("publish")]
+        [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "CompanyOwner" })]
+        public async Task<IActionResult> PublishOnDislinkt()
+        {
+            var userId = Guid.Parse(_userManager.GetUserId(User));
+            
+            try
+            {
+                var receivedApiKey = await _publishCompanyService.Publish(userId);
+                return Ok(receivedApiKey);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
     }

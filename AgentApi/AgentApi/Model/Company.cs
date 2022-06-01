@@ -11,6 +11,7 @@ namespace AgentApi.Model
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Description { get; set; }
+        public string ApiKey { get; set; }
 
         public bool IsVerified { get; set; }
 
