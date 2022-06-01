@@ -18,15 +18,17 @@ namespace AgentApi.Controllers
     {
         private readonly CreateJobOfferService _createJobOfferService;
         private readonly CreateCommentOnJobOfferService _createCommentOnJobOfferService;
+        private readonly PublishJobOfferService _publishJobOfferService;
         private readonly UserManager<User> _userManager;
         private readonly SearchOfferService _searchOfferService;
 
-        public JobOfferController(CreateJobOfferService createJobOfferService, UserManager<User> userManager, CreateCommentOnJobOfferService createCommentOnJobOfferService, SearchOfferService searchOfferService)
+        public JobOfferController(CreateJobOfferService createJobOfferService, UserManager<User> userManager, CreateCommentOnJobOfferService createCommentOnJobOfferService, SearchOfferService searchOfferService, PublishJobOfferService publishJobOfferService)
         {
             _createJobOfferService = createJobOfferService;
             _userManager = userManager;
             _createCommentOnJobOfferService = createCommentOnJobOfferService;
             _searchOfferService = searchOfferService;
+            _publishJobOfferService = publishJobOfferService;
         }
 
         [HttpGet]
@@ -79,6 +81,23 @@ namespace AgentApi.Controllers
                 var comment = await _createCommentOnJobOfferService.Create(userId, newComment);
 
                 return Ok(comment);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("publish/{jobOfferId}")]
+        [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "CompanyOwner" })]
+        public async Task<IActionResult> Publish(Guid jobOfferId)
+        {
+            var userId = Guid.Parse(_userManager.GetUserId(User));
+
+            try
+            {
+                var response = await _publishJobOfferService.Publish(userId, jobOfferId);
+                return Ok(response);
             }
             catch (Exception e)
             {

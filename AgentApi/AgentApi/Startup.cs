@@ -77,6 +77,8 @@ namespace AgentApi
 
             services.AddScoped<CustomAuthorizeAttribute>();
 
+            services.AddHttpClient();
+            
             services.AddHostedService(x =>
                 new AdminSeedHostedService(x));
         }
