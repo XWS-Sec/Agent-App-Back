@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AgentApi.Attributes;
 using AgentApi.Dtos;
@@ -39,6 +40,16 @@ namespace AgentApi.Controllers
             return company == null
                 ? NotFound("Company with that id does not exist")
                 : Ok(_mapper.Map<SearchCompanyDto>(company));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var companies = await _searchCompanyService.GetAllVerified();
+            if (companies == null)
+                return NotFound("There is not existing companies!");
+
+            return Ok(_mapper.Map<List<VerifiedCompanyDto>>(companies));
         }
 
         [HttpPost]

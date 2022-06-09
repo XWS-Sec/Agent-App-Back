@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AgentApi.Model;
 using MongoDB.Driver;
@@ -24,6 +26,13 @@ namespace AgentApi.Services
                 return null;
 
             return user.Company;
+        }
+
+        public async Task<List<Company>> GetAllVerified()
+        {
+            var users = await (await _userCollection.FindAsync(x => x.Company != null)).ToListAsync();
+            var companies = users.Select(x => x.Company).Where(x => x.IsVerified).ToList();
+            return companies;
         }
     }
 }

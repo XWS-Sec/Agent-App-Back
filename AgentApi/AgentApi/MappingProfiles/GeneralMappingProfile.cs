@@ -12,6 +12,7 @@ namespace AgentApi.MappingProfiles
             CreateMap<RegisterCompanyDto, Company>();
             CreateMap<NewJobOfferDto, JobOffer>();
             CreateMap<Company, SearchCompanyDto>();
+            CreateMap<Company, VerifiedCompanyDto>();
         }
     }
 }
