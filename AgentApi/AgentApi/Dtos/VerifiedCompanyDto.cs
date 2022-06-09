@@ -14,7 +14,5 @@ namespace AgentApi.Dtos
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Description { get; set; }
-        public IList<Comment> Comments { get; set; }
-        public IList<JobOffer> JobOffers { get; set; }
     }
 }

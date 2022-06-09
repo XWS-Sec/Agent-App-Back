@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AgentApi.Model;
+using System;
+using System.Collections.Generic;
 
 namespace AgentApi.Dtos
 {
@@ -11,5 +13,8 @@ namespace AgentApi.Dtos
         public string PhoneNumber { get; set; }
         public string Description { get; set; }
         public bool IsVerified { get; set; }
+
+        public IList<Comment> Comments { get; set; }
+        public IList<JobOffer> JobOffers { get; set; }
     }
 }
