@@ -43,6 +43,7 @@ namespace AgentApi.Services
                 new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
 
             var responseContent = await response.Content.ReadAsStringAsync();
+            if (!responseContent.Contains("{")) return responseContent;
             var entity = JsonConvert.DeserializeObject<PublishCompanyContract>(responseContent);
             
             if (!response.IsSuccessStatusCode)
