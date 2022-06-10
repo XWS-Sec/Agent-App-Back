@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AgentApi.Attributes;
 using AgentApi.Dtos;
@@ -15,13 +16,14 @@ namespace AgentApi.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly RegisterCompanyService _registerCompanyService;
+        private readonly UpdateCompanyService _updateCompanyService;
         private readonly VerifyCompanyService _verifyCompanyService;
         private readonly SearchCompanyService _searchCompanyService;
         private readonly PublishCompanyService _publishCompanyService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper, PublishCompanyService publishCompanyService)
+        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper, PublishCompanyService publishCompanyService, UpdateCompanyService updateCompanyService)
         {
             _registerCompanyService = registerCompanyService;
             _userManager = userManager;
@@ -29,6 +31,7 @@ namespace AgentApi.Controllers
             _searchCompanyService = searchCompanyService;
             _mapper = mapper;
             _publishCompanyService = publishCompanyService;
+            _updateCompanyService = updateCompanyService;
         }
 
         [HttpGet("{companyId}")]
@@ -39,6 +42,16 @@ namespace AgentApi.Controllers
             return company == null
                 ? NotFound("Company with that id does not exist")
                 : Ok(_mapper.Map<SearchCompanyDto>(company));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var companies = await _searchCompanyService.GetAllVerified();
+            if (companies == null)
+                return NotFound("There is not existing companies!");
+
+            return Ok(_mapper.Map<List<VerifiedCompanyDto>>(companies));
         }
 
         [HttpPost]
@@ -59,7 +72,7 @@ namespace AgentApi.Controllers
             }
         }
 
-        [HttpPut("{companyId}")]
+        [HttpPut("verify/{companyId}")]
         [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "admin" })]
         public async Task<IActionResult> Verify(Guid companyId)
         {
@@ -73,6 +86,24 @@ namespace AgentApi.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPut]
+        [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "CompanyOwner" })]
+        public async Task<IActionResult> Update(UpdateCompanyDto updateCompanyDto)
+        {
+            var userId = _userManager.GetUserId(User);
+            Company response;
+            try
+            {
+                response = await _updateCompanyService.UpdateCompany(userId,updateCompanyDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("publish")]
