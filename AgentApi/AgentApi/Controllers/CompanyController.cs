@@ -16,13 +16,14 @@ namespace AgentApi.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly RegisterCompanyService _registerCompanyService;
+        private readonly UpdateCompanyService _updateCompanyService;
         private readonly VerifyCompanyService _verifyCompanyService;
         private readonly SearchCompanyService _searchCompanyService;
         private readonly PublishCompanyService _publishCompanyService;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper, PublishCompanyService publishCompanyService)
+        public CompanyController(RegisterCompanyService registerCompanyService, UserManager<User> userManager, VerifyCompanyService verifyCompanyService, SearchCompanyService searchCompanyService, IMapper mapper, PublishCompanyService publishCompanyService, UpdateCompanyService updateCompanyService)
         {
             _registerCompanyService = registerCompanyService;
             _userManager = userManager;
@@ -30,6 +31,7 @@ namespace AgentApi.Controllers
             _searchCompanyService = searchCompanyService;
             _mapper = mapper;
             _publishCompanyService = publishCompanyService;
+            _updateCompanyService = updateCompanyService;
         }
 
         [HttpGet("{companyId}")]
@@ -70,7 +72,7 @@ namespace AgentApi.Controllers
             }
         }
 
-        [HttpPut("{companyId}")]
+        [HttpPut("verify/{companyId}")]
         [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "admin" })]
         public async Task<IActionResult> Verify(Guid companyId)
         {
@@ -84,6 +86,24 @@ namespace AgentApi.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPut]
+        [TypeFilter(typeof(CustomAuthorizeAttribute), Arguments = new object[] { "CompanyOwner" })]
+        public async Task<IActionResult> Update(UpdateCompanyDto updateCompanyDto)
+        {
+            var userId = _userManager.GetUserId(User);
+            Company response;
+            try
+            {
+                response = await _updateCompanyService.UpdateCompany(userId,updateCompanyDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("publish")]
