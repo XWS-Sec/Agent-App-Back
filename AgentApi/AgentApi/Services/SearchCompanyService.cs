@@ -31,7 +31,7 @@ namespace AgentApi.Services
         public async Task<List<Company>> GetAllVerified()
         {
             var users = await (await _userCollection.FindAsync(x => x.Company != null)).ToListAsync();
-            var companies = users.Select(x => x.Company).Where(x => x.IsVerified).ToList();
+            var companies = users.Select(x => x.Company).ToList();
             return companies;
         }
     }

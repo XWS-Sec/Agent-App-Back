@@ -51,7 +51,7 @@ namespace AgentApi.Controllers
             if (companies == null)
                 return NotFound("There is not existing companies!");
 
-            return Ok(_mapper.Map<List<VerifiedCompanyDto>>(companies));
+            return Ok(_mapper.Map<List<RequestCompanyDto>>(companies));
         }
 
         [HttpPost]

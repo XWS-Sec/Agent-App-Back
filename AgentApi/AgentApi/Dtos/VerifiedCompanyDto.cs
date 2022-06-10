@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AgentApi.Dtos
 {
-    public class VerifiedCompanyDto
+    public class RequestCompanyDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -14,5 +14,6 @@ namespace AgentApi.Dtos
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Description { get; set; }
+        public bool IsVerified { get; set; }
     }
 }
