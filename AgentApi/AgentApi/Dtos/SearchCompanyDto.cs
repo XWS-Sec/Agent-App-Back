@@ -14,6 +14,8 @@ namespace AgentApi.Dtos
         public string Description { get; set; }
         public bool IsVerified { get; set; }
 
+        public string ApiKey { get; set; }
+
         public IList<Comment> Comments { get; set; }
         public IList<JobOffer> JobOffers { get; set; }
     }
