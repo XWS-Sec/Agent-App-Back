@@ -36,7 +36,6 @@ namespace AgentApi.Services
             return user.Company;
         }
 
-
         private static void SetCompany(Company newCompany,Company updatedCompany)
         {
             updatedCompany.Address = string.IsNullOrEmpty(newCompany.Address) ? updatedCompany.Address : newCompany.Address;
