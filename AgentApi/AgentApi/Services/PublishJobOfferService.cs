@@ -30,7 +30,7 @@ namespace AgentApi.Services
 
             var request = new
             {
-                LinkToJobOffer = "https://localhost:44323/api/JobOffer/" + jobOffer.Id,
+                LinkToJobOffer = "http://localhost:3001/jobs/" + jobOffer.Id,
                 Description = jobOffer.Description,
                 JobTitle = jobOffer.JobTitle,
                 Prerequisites = jobOffer.Prerequisites
